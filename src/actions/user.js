@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiAuth from '../api/auth';
 import config from '../config';
 import jwt from "jsonwebtoken";
 
@@ -74,28 +75,38 @@ export function receiveToken(token) {
     }
 }
 
-export function loginUser(creds) {
+export function receiveUser(user) {
     return (dispatch) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        console.log(user);
+        localStorage.setItem('token', 'token');
+        dispatch(receiveLogin());
+    }
+}
+
+export function loginUser(creds) {
+    return async (dispatch) => {
         // We check if app runs with backend mode
         if (!config.isBackend) {
-          dispatch(receiveToken('token'));
-        }
+            dispatch(receiveToken('token'));
+        } else {
+            dispatch(requestLogin());
+            if (creds.social) {
+                window.location.href = config.baseURLApi + "/user/signin/" + creds.social + (process.env.NODE_ENV === "production" ? "?app=sing-app-react" : "");
+            } else if (creds.username.length > 0 && creds.password.length > 0) {
 
-        else {
-          dispatch(requestLogin());
-          if (creds.social) {
-            window.location.href = config.baseURLApi + "/user/signin/" + creds.social + (process.env.NODE_ENV === "production" ? "?app=sing-app-react" : "");
-          } else if (creds.email.length > 0 && creds.password.length > 0) {
-            axios.post("/user/signin/local", creds).then(res => {
-              const token = res.data.token;
-              dispatch(receiveToken(token));
-            }).catch(err => {
-              dispatch(loginError(err.response.data));
-            })
-
-          } else {
-            dispatch(loginError('Something was wrong. Try again'));
-          }
+                try {
+                    const response = await apiAuth.login({username:creds.username, password:creds.password} );
+                    dispatch(receiveUser(response.data.data));
+                }
+                catch(err){
+                    // alert('Falha no login, tente novamente.')
+                    dispatch(loginError(err?.response?.data?.message));
+                }
+                
+            } else {
+                dispatch(loginError('Something was wrong. Try again'));
+            }
         }
     };
 }

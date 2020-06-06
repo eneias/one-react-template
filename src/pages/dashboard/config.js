@@ -6,6 +6,8 @@ export default {
             success: "#81D4BB",
             info: "#4DC7DF",
             warning: "#FFBF69",
+            gymmeRed: "#ab3935",
+            gymmeGreen: "#086e56",
             danger: "#FF7769",
             inverse: "#002B49",
             textColor: "#495057",

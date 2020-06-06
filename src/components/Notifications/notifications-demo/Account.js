@@ -20,10 +20,13 @@ class MessagesDemo extends React.Component {
     this.props.dispatch(logoutUser());
   }
   render() {
+
+      const user = JSON.parse(localStorage.getItem("user") || {});
+      
     return (
       <ListGroup className={[s.listGroupAccount, "thin-scroll"].join(" ")}>
-        <p className={`${s.listGroupTitleAccount}`}>Sara Smith</p>
-        <p className={`${s.listGroupSubtitleAccount}`}>Sara_smith@gmail.com</p>
+        <p className={`${s.listGroupTitleAccount}`}>{user.name}</p>
+        <p className={`${s.listGroupSubtitleAccount}`}>{user.email}</p>
         <ListGroupItem className={`${s.listGroupItemAccount} mt-3`}>
           <img src={settingsIcon} alt="settings" className={"mr-2"} /> Settings
         </ListGroupItem>

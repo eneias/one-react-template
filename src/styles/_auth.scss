@@ -1,12 +1,16 @@
 @import "../styles/app";
 
+
 .auth-page {
   height: 100vh;
-  background-color: #fff;
   padding: 0 40px;
   @include media-breakpoint-down(sm) {
     padding: 0;
   }
+  background: #fff url("../images/logimg.jpg") no-repeat;
+  background-size: cover;
+  display: flex;
+
 
   img.backImg {
     position: absolute;
@@ -20,13 +24,14 @@
 }
 
 .widget-auth {
-  background: none !important;
+  background: #FFFFFF99 !important;
   max-width: 360px;
   padding: 10px !important;
-  height: 100vh;
+  //height: 100vh;
   display: flex !important;
   flex-direction: column;
   justify-content: center;
+  margin-left: 40%;
 
   @include media-breakpoint-down(sm) {
     max-width: 100%;

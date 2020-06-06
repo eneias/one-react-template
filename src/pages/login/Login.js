@@ -6,20 +6,19 @@ import { Alert, Button, Label, Input, FormGroup } from "reactstrap";
 import Widget from "../../components/Widget";
 import { loginUser, receiveToken } from "../../actions/user";
 import jwt from "jsonwebtoken";
-import signinImg from "../../images/signinImg.svg";
+import logo from "../../images/logo.svg";
 import config from "../../config";
 import img1 from "../../images/Vector-1.svg";
-import img2 from "../../images/Vector-2.svg";
-import img3 from "../../images/Vector-3.svg";
-import img4 from "../../images/Vector-4.svg";
+import img2 from "../../images/Vector-4.svg";
 
 class Login extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
   };
 
-  static isAuthenticated(token) {
+  static isAuthenticated(token) {    
     // We check if app runs with backend mode
+    if (config.isBackend && token) return true;
     if (!config.isBackend && token) return true;
     if (!token) return;
     const date = new Date().getTime() / 1000;
@@ -31,13 +30,13 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      email: "admin@flatlogic.com",
-      password: "password",
+      email: "admin",
+      password: "admin",
     };
 
     this.doLogin = this.doLogin.bind(this);
     this.googleLogin = this.googleLogin.bind(this);
-    this.microsoftLogin = this.microsoftLogin.bind(this);
+    this.facebookLogin = this.facebookLogin.bind(this);
     this.changeEmail = this.changeEmail.bind(this);
     this.changePassword = this.changePassword.bind(this);
     this.signUp = this.signUp.bind(this);
@@ -54,7 +53,7 @@ class Login extends React.Component {
   doLogin(e) {
     e.preventDefault();
     this.props.dispatch(
-      loginUser({ email: this.state.email, password: this.state.password })
+      loginUser({ username: this.state.email, password: this.state.password })
     );
   }
 
@@ -62,8 +61,8 @@ class Login extends React.Component {
     this.props.dispatch(loginUser({ social: "google" }));
   }
 
-  microsoftLogin() {
-    this.props.dispatch(loginUser({ social: "microsoft" }));
+  facebookLogin() {
+    this.props.dispatch(loginUser({ social: "facebook" }));
   }
 
   componentDidMount() {
@@ -79,6 +78,9 @@ class Login extends React.Component {
   }
 
   render() {
+    console.log(this.props.location.state)
+    console.log(this.props)
+    
     const { from } = this.props.location.state || {
       from: { pathname: "/app" },
     }; // eslint-disable-line
@@ -94,13 +96,11 @@ class Login extends React.Component {
           className="widget-auth my-auto"
           title={
             <h3 className="mt-0 mb-2" style={{ fontSize: 40 }}>
-              Login
+              <img src={logo} style={{width: 280}}/>
             </h3>
           }
         >
-          <p className="widget-auth-info">
-            Welcome Back! Please login to your account
-          </p>
+
           <form className="mt" onSubmit={this.doLogin}>
             {this.props.errorMessage && (
               <Alert className="alert-sm" color="danger">
@@ -122,7 +122,7 @@ class Login extends React.Component {
               <Label for="search-input1">Password</Label>
               <input
                 className="form-control"
-                defaultValue={"123123"}
+                defaultValue={"admin"}
                 onChange={this.changePassword}
                 type="password"
                 required
@@ -142,7 +142,7 @@ class Login extends React.Component {
             </FormGroup>
             <Button
               type="submit"
-              color="warning"
+              color="gymmeRed"
               className="auth-btn mb-3"
               size="sm"
             >
@@ -151,17 +151,11 @@ class Login extends React.Component {
             <p className="widget-auth-info text-center">Or</p>
             <div className={"d-flex mb-4 mt-3"}>
               <p className={"mb-0"}>Login with</p>
-              <a href={"/"}>
+              <a onClick={this.facebookLogin}>
                 <img src={img1} alt="facebook" className={"ml-3"} />
               </a>
-              <a href={"/"}>
-                <img src={img2} alt="github" className={"ml-3"} />
-              </a>
-              <a href={"/"}>
-                <img src={img3} alt="linkedin" className={"ml-3"} />
-              </a>
-              <a href={"/"}>
-                <img src={img4} alt="google_plus" className={"ml-3"} />
+              <a  onClick={this.googleLogin}>
+                <img src={img2} alt="google_plus" className={"ml-3"} />
               </a>
             </div>
             <div className={"d-flex align-items-center"}>
@@ -172,7 +166,6 @@ class Login extends React.Component {
             </div>
           </form>
         </Widget>
-        <img src={signinImg} alt="signin" className={"backImg"} />
       </div>
     );
   }
